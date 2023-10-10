@@ -1,95 +1,43 @@
-import Image from 'next/image'
+'use client'
+import Link from 'next/link'
 import styles from './page.module.css'
+import Head from 'next/head'
+import { useUser } from '@auth0/nextjs-auth0/client';
+import LoadingSkeleton from './LoadingSkeleton'
+import { useRouter } from 'next/navigation'
+import { Router } from 'next/router';
+import { redirect } from 'next/navigation'
 
-export default function Home() {
+
+export default  function Home() {
+  const {isLoading, user, error} = useUser();
+
+  if (isLoading) return <LoadingSkeleton />
+  if (error) return <div>{error.message}</div>
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.js</code>
-        </p>
+    <div>
+      <Head>
+        <title>Chatty AI - Login or Sign Up</title>
+      </Head>
+      <div className='min-h-screen w-full bg-gray-800 flex justify-center items-center text-white text-center'>
         <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+        {
+          !!user && redirect('/chat')
+        }
+        {
+          !user && 
+          <>
+          <Link href="/api/auth/login" className='rounded-md bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600'>
+          Login
+          </Link>
+          <Link href="/api/auth/signup" className='rounded-md bg-emerald-500 px-4 py-2 text-white hover:bg-emerald-600'>
+          Sign Up
+          </Link>
+          </>
+        }
         </div>
       </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    </div>
   )
 }
+
